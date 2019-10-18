@@ -1,0 +1,15 @@
+batea.egg-info/
+batea_test/
+dist/
+output/
+bin/
+include/
+src/
+share/
+lib
+lib64
+dist/
+man/
+
+*/__pycache__/
+*/*/__pycache__/
