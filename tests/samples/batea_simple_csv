@@ -1,0 +1,8 @@
+ipv4,hostname,os_name,port,state,protocol,service,software_banner
+10.251.53.100,,Linux,111,open,tcp,rpcbind,"
+  program version   port/proto  service
+  100000  2,3,4        111/tcp  rpcbind
+  100000  2,3,4    "
+10.251.53.188,,Linux,6000,open,tcp,X11,"
+  X11Probe:
+    CentOS"
