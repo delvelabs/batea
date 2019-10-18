@@ -1,6 +1,18 @@
 # Batea
+*A batea is a large shallow pan of wood or iron traditionally used by gold prospecters for washing sand and gravel to recover gold nuggets.*
 
-Anomaly-based network asset ranking, gold-nuggeting, make AI usable.
+Batea is a context-driven network asset ranking framework based on anomaly detection family of machine learning algorithms. It is easily extendable by adding features to the numerical representation of the network.
+
+Batea works by constructing a numerical representation (numpy) from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets buried in the mountain of your network information overload.
+
+The numerical representation is constructed using features drawn from the expertise of the security community. It has been conceived in order to be easily extendable.
+
+Ex:
+
+```bash
+$ sudo nmap -A 192.168.0.0/16 -oX output.xml
+$ python -m batea -v output.xml
+```
 
 
 ## Developers Installation
@@ -40,6 +52,10 @@ $ python3 -m batea -x nmap_report.xml -c portscan_data.csv
 # Using wildcards (default xsml)
 $ python3 -m batea ./nmap*.xml
 $ python3 -m batea -f csv ./assets*.csv
+
+# Adjust verbosity
+
+$ python3 -m batea -vv nmap_report.xml
 ```
 
 ## How-To add a feature
