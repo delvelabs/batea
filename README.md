@@ -1,11 +1,11 @@
 # Batea
 *A batea is a large shallow pan of wood or iron traditionally used by gold prospecters for washing sand and gravel to recover gold nuggets.*
 
-Batea is a context-driven network asset ranking framework based on anomaly detection family of machine learning algorithms. It is easily extendable by adding features to the numerical representation of the network.
+Batea is a context-driven network asset ranking framework based on the outlier detection family of machine learning algorithms. The goal of Batea is to to allow security teams to automatically filter interesting network assets in large networks using nmap scan reports. It is easily extendable by adding features to the numerical representation of the network.
 
-Batea works by constructing a numerical representation (numpy) from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets buried in the mountain of your network information overload.
+Batea works by constructing a numerical representation (numpy) from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets buried in the mountain of your network information overload. 
 
-The numerical representation is constructed using features drawn from the expertise of the security community. It has been conceived in order to be easily extendable.
+The numerical representation is constructed using features drawn from the expertise of the security community. It has been conceived in order to be easily extendable. The features act as elements of intuition, and the unspervised anomaly detection methods allows the context of the network asset to be used as the central building block of the ranking algorithm.
 
 Ex:
 
