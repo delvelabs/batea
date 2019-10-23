@@ -25,6 +25,11 @@ setup(
     packages=[
         'batea'
     ],
+    entry_points={
+        'console_scripts': [
+            'batea = batea.__main__:main'
+        ]
+    },
     install_requires=requirements,
     license="GPLv2",
 )

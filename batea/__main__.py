@@ -18,6 +18,7 @@
 
 import click
 from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel
+from defusedxml import ElementTree
 from batea import build_report
 
 
@@ -40,18 +41,22 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
     xml_parser = NmapReportParser()
     output_manager = JsonOutput(verbose)
 
-    if input_format == 'xml':
-        for file in nmap_reports:
-            report.hosts.extend([host for host in xml_parser.load_hosts(file)])
-    if input_format == 'csv':
-        for file in nmap_reports:
-            report.hosts.extend([host for host in csv_parser.load_hosts(file)])
-    if read_csv:
-        for file in read_csv:
-            report.hosts.extend([host for host in csv_parser.load_hosts(file)])
-    if read_xml:
-        for file in read_xml:
-            report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+    try:
+        if input_format == 'xml':
+            for file in nmap_reports:
+                report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+        if input_format == 'csv':
+            for file in nmap_reports:
+                report.hosts.extend([host for host in csv_parser.load_hosts(file)])
+        if read_csv:
+            for file in read_csv:
+                report.hosts.extend([host for host in csv_parser.load_hosts(file)])
+        if read_xml:
+            for file in read_xml:
+                report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+    except (UnicodeDecodeError, ElementTree.ParseError, ValueError):
+        print("Invalid or corrupted file, use nmap XML output or correct CSV")
+        raise SystemExit
 
     report_features = report.get_feature_names()
     output_manager.add_report_info(report)

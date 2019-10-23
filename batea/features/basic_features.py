@@ -192,7 +192,6 @@ class HostnameEntropyFeature(FeatureBase):
             char_list.extend(hostname)
         frequency = Counter(char_list)
         total = len(char_list)
-        print(char_list)
-        print(frequency)
+
         f = lambda x: -sum([(frequency[c]/total)*np.log2(frequency[c]/total) for c in x.hostname or ''])
         return f
