@@ -1,11 +1,11 @@
 # Batea
 *A batea is a large shallow pan of wood or iron traditionally used by gold prospecters for washing sand and gravel to recover gold nuggets.*
 
-Batea is a context-driven network asset ranking framework based on the outlier detection family of machine learning algorithms. The goal of Batea is to to allow security teams to automatically filter interesting network assets in large networks using nmap scan reports. It is easily extendable by adding features to the numerical representation of the network.
+Batea is a context-driven network asset ranking framework based on the outlier detection family of machine learning algorithms. The goal of Batea is to allow security teams to automatically filter interesting network assets in large networks using nmap scan reports. It is easily extendable by adding features to the numerical representation of the network.
 
 Batea works by constructing a numerical representation (numpy) from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets buried in the mountain of your network information overload. 
 
-The numerical representation is constructed using features drawn from the expertise of the security community. It has been conceived in order to be easily extendable. The features act as elements of intuition, and the unspervised anomaly detection methods allows the context of the network asset to be used as the central building block of the ranking algorithm.
+The numerical representation is constructed using features drawn from the expertise of the security community. It has been conceived in order to be easily extendable. The features act as elements of intuition, and the unsupervised anomaly detection methods allow the context of the network asset to be used as the central building block of the ranking algorithm.
 
 Ex:
 
@@ -59,8 +59,8 @@ $ python3 -m batea -vv nmap_report.xml
 ```
 
 ## How-To add a feature
-Batea works by assigning numerical features to every host in the report (or series of report).
-Features are objects inherited from the `FeatureBase` class that instanciate a `_transform` method. This method takes the list of hosts as input and return a lambda function that maps to a numpy column of numeric values, indexed by hosts (order is conserved). The column is then added to the matrix representation of the report.
+Batea works by assigning numerical features to every host in the report (or series of reports).
+Features are objects inherited from the `FeatureBase` class that instanciate a `_transform` method. This method takes the list of hosts as input and returns a lambda function that maps to a numpy column of numeric values, indexed by hosts (order is conserved). The column is then added to the matrix representation of the report.
 
 Most feature transformations are implemented using a simple lambda function. Just make sure to give a default numeric value to every host for model compatibility.
 
@@ -92,9 +92,9 @@ def build_report():
 
 ## Using precomputed tabular data (CSV)
 
-It is possible to use preprocessed data to train model or for prediction.
+It is possible to use preprocessed data to train the model or for prediction.
 The data has to be indexed by `(ipv4, port)` with one unique combination per row. The type of data should be close to what you expect from the XML version of an nmap report.
-A column have to use one of the following names, but you don't have to use all of them. The parser defaults to null values if a column is absent.
+A column has to use one of the following names, but you don't have to use all of them. The parser defaults to null values if a column is absent.
 ```python
   'ipv4',
   'hostname',
