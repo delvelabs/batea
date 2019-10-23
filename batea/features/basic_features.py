@@ -61,6 +61,16 @@ class LowPortCountFeature(FeatureBase):
         return f
 
 
+class TCPPortCountFeature(FeatureBase):
+
+    def __init__(self):
+        super().__init__(name="tcp_port_count")
+
+    def _transform(self, hosts):
+        f = lambda x: len([port for port in x.ports if port.state == 'open' and port.protocol == 'tcp'])
+        return f
+
+
 class NamedServiceCountFeature(FeatureBase):
 
     def __init__(self):
@@ -81,13 +91,13 @@ class BannerCountFeature(FeatureBase):
         return f
 
 
-class MaxBannerLenghtFeature(FeatureBase):
+class MaxBannerLengthFeature(FeatureBase):
 
     def __init__(self):
-        super().__init__(name="max_banner_lenght")
+        super().__init__(name="max_banner_length")
 
     def _transform(self, hosts):
-        f = lambda x: max([port.get_banner_lenght() for port in x.ports], default=0)
+        f = lambda x: max([port.get_banner_length() for port in x.ports], default=0)
         return f
 
 
@@ -159,4 +169,30 @@ class PortEntropyFeature(FeatureBase):
         frequency = Counter(port_list)
         total = len(port_list)
         f = lambda x: -sum([(frequency[p.port]/total)*np.log2(frequency[p.port]/total) for p in x.ports])
+        return f
+
+
+class HostnameLengthFeature(FeatureBase):
+        def __init__(self):
+            super().__init__(name="hostname_length")
+
+        def _transform(self, hosts):
+            f = lambda x: len(x.hostname) if x.hostname is not None else 0
+            return f
+
+
+class HostnameEntropyFeature(FeatureBase):
+    def __init__(self):
+        super().__init__(name="hostname_entropy")
+
+    def _transform(self, hosts):
+        char_list = []
+        hostname_chars = [list(host.hostname) if host.hostname is not None else '' for host in hosts]
+        for hostname in hostname_chars:
+            char_list.extend(hostname)
+        frequency = Counter(char_list)
+        total = len(char_list)
+        print(char_list)
+        print(frequency)
+        f = lambda x: -sum([(frequency[c]/total)*np.log2(frequency[c]/total) for c in x.hostname or ''])
         return f
