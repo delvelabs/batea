@@ -55,8 +55,8 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
         if read_xml:
             for file in read_xml:
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
-    except (UnicodeDecodeError, ElementTree.ParseError, ValueError):
-        print("Invalid or corrupted file, use nmap XML output or correct CSV")
+    except (UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
+        output_manager.log_parse_error(e)
         raise SystemExit
 
     report_features = report.get_feature_names()

@@ -30,6 +30,10 @@ class OutputManager:
     def log_message(self, message):
         self._add_data("general_log", message)
 
+    def log_parse_error(self, e):
+        print(e)
+        print("Invalid or corrupted file, use nmap XML output or correct CSV")
+
     def format(self, data):
         raise NotImplementedError()
 
