@@ -16,13 +16,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 import json
+import numpy as np
 
 
 class OutputManager:
 
-    def __init__(self, verbosity=0):
+    def __init__(self, verbosity=0, report=None, output_matrix=None):
         self.verbosity = verbosity
         self.data = {}
+        self.report = report
+        self.output_matrix = output_matrix
 
     def log_message(self, message):
         self._add_data("general_log", message)
@@ -32,6 +35,19 @@ class OutputManager:
 
     def flush(self):
         print(self.format(self.data))
+
+        if self.output_matrix:
+
+            matrix_rep = np.append(self.report.generate_matrix_representation(),
+                                   np.expand_dims(self.scores, axis=1),
+                                   axis=1)
+            columns = self.report.get_feature_names() + ['anomaly_score']
+
+            np.savetxt(self.output_matrix,
+                       matrix_rep,
+                       delimiter=',',
+                       header=','.join(columns),
+                       comments="")
 
     def _add_data(self, key, value, container=None):
         if container is None:
@@ -44,6 +60,7 @@ class OutputManager:
             container[key].append(value)
 
     def add_report_info(self, report):
+        self.report = report
         report_info = {
             'number_of_hosts': len(report.hosts),
             'features': report.get_feature_names()
@@ -66,6 +83,9 @@ class OutputManager:
 
     def _add_port_info(self, port):
         return port.__dict__
+
+    def add_scores(self, scores):
+        self.scores = scores
 
 
 class JsonOutput(OutputManager):

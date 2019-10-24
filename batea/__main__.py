@@ -31,15 +31,16 @@ from batea import build_report
 @click.option("-D", "--dump-model", type=click.File('wb'), default=None)
 @click.option("-f", "--input-format", type=str, default='xml')
 @click.option('-v', '--verbose', count=True)
+@click.option('-oM', "--output-matrix", type=click.File('w'), default=None)
 @click.argument("nmap_reports", type=click.File('r'), nargs=-1)
 def main(*, nmap_reports, input_format, dump_model, load_model,
-         output_all, read_csv, read_xml, n_output, verbose):
+         output_all, read_csv, read_xml, n_output, verbose, output_matrix):
     """Context-driven asset ranking based using anomaly detection"""
 
     report = build_report()
     csv_parser = CSVFileParser()
     xml_parser = NmapReportParser()
-    output_manager = JsonOutput(verbose)
+    output_manager = JsonOutput(verbose, output_matrix=output_matrix)
 
     try:
         if input_format == 'xml':
@@ -73,6 +74,7 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
         batea.model.fit(matrix_rep)
 
     scores = -batea.model.score_samples(matrix_rep)
+    output_manager.add_scores(scores)
 
     if output_all:
         n_output = len(scores)
