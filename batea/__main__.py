@@ -17,7 +17,7 @@
 
 
 import click
-from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel
+from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel, MatrixOutput
 from defusedxml import ElementTree
 from batea import build_report
 
@@ -40,7 +40,10 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
     report = build_report()
     csv_parser = CSVFileParser()
     xml_parser = NmapReportParser()
-    output_manager = JsonOutput(verbose, output_matrix=output_matrix)
+    if output_matrix:
+        output_manager = MatrixOutput(output_matrix)
+    else:
+        output_manager = JsonOutput(verbose)
 
     try:
         if input_format == 'xml':
@@ -57,6 +60,10 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
     except (UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
         output_manager.log_parse_error(e)
+        raise SystemExit
+
+    if len(report.hosts) == 0:
+        output_manager.log_empty_report()
         raise SystemExit
 
     report_features = report.get_feature_names()

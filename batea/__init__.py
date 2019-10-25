@@ -18,7 +18,7 @@
 from .core.nmap_parser import NmapReportParser
 from .core.csv_parser import CSVFileParser
 from .core.report import NmapReport, Host, Port
-from .core.output_manager import OutputManager
+from .core.output_manager import OutputManager, MatrixOutput, JsonOutput
 from .features import FeatureBase
 
 

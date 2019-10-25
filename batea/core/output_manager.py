@@ -17,41 +17,31 @@
 
 import json
 import numpy as np
+from sys import stderr
 
 
 class OutputManager:
 
-    def __init__(self, verbosity=0, report=None, output_matrix=None):
+    def __init__(self, verbosity=0, report=None):
         self.verbosity = verbosity
         self.data = {}
         self.report = report
-        self.output_matrix = output_matrix
 
     def log_message(self, message):
         self._add_data("general_log", message)
 
     def log_parse_error(self, e):
-        print(e)
-        print("Invalid or corrupted file, use nmap XML output or correct CSV")
+        stderr.write(e)
+        stderr.write("Invalid or corrupted file, use nmap XML output or correct CSV. \nQuitting\n")
 
-    def format(self, data):
+    def log_empty_report(self):
+        stderr.write("Empty report, can't predict. \nQuitting\n")
+
+    def _format(self, data):
         raise NotImplementedError()
 
     def flush(self):
-        print(self.format(self.data))
-
-        if self.output_matrix:
-
-            matrix_rep = np.append(self.report.generate_matrix_representation(),
-                                   np.expand_dims(self.scores, axis=1),
-                                   axis=1)
-            columns = self.report.get_feature_names() + ['anomaly_score']
-
-            np.savetxt(self.output_matrix,
-                       matrix_rep,
-                       delimiter=',',
-                       header=','.join(columns),
-                       comments="")
+        self._format(self.data)
 
     def _add_data(self, key, value, container=None):
         if container is None:
@@ -94,5 +84,24 @@ class OutputManager:
 
 class JsonOutput(OutputManager):
 
-    def format(self, data):
-        return json.dumps(data, indent=4)
+    def _format(self, data):
+        print(json.dumps(data, indent=4))
+
+
+class MatrixOutput(OutputManager):
+
+    def __init__(self, output_matrix):
+        self.output_matrix = output_matrix
+        super().__init__()
+
+    def _format(self, data):
+        matrix_rep = np.append(self.report.generate_matrix_representation(),
+                               np.expand_dims(self.scores, axis=1),
+                               axis=1)
+        columns = self.report.get_feature_names() + ['anomaly_score']
+
+        np.savetxt(self.output_matrix,
+                   matrix_rep,
+                   delimiter=',',
+                   header=','.join(columns),
+                   comments="")
