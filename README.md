@@ -1,11 +1,14 @@
 # Batea
 *A batea is a large shallow pan of wood or iron traditionally used by gold prospecters for washing sand and gravel to recover gold nuggets.*
 
-Batea is a context-driven network asset ranking framework based on anomaly detection family of machine learning algorithms. It is easily extendable by adding features to the numerical representation of the network.
+Batea is a context-driven network device ranking framework based on the anomaly detection family of machine learning algorithms. The goal of Batea is to allow security teams to __automatically filter interesting network assets__ in large networks using nmap scan reports. We call those *Gold Nuggets*.
 
-Batea works by constructing a numerical representation (numpy) from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets buried in the mountain of your network information overload.
 
-The numerical representation is constructed using features drawn from the expertise of the security community. It has been conceived in order to be easily extendable.
+Batea works by constructing a numerical representation (numpy) of all devices from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets. It is easily extendable by adding specific features, or characteristics, to the numerical representation of the network elements.
+
+The numerical representation of the network is constructed using features, which are inspired by the expertise of the security community. It has been conceived in order to be easily extendable. The features act as elements of intuition, and the unsupervised anomaly detection methods allow the context of the network asset to be used as the central building block of the ranking algorithm.
+
+Models are the heart of Batea. Models are machine learning algorithms trained on the data and used to predict score on the same (and other) data. Batea also allow for model persistence. That is, you can re-use pretrained models and export models trained on large datasets for further use.
 
 Ex:
 
@@ -13,7 +16,14 @@ Ex:
 $ sudo nmap -A 192.168.0.0/16 -oX output.xml
 $ python -m batea -v output.xml
 ```
-
+## Installation
+```bash
+$ git clone git@bitbucket.org:delvelabs/batea.git
+$ cd batea
+$ python3 setup.py sdist
+$ pip3 install -r requirements.txt
+$ pip3 install -e .
+```
 
 ## Developers Installation
 
@@ -31,27 +41,33 @@ $ pytest
 ## Example usage
 
 ```bash
-# simple use
-$ python3 -m batea nmap_report.xml
+# simple use (output top 5 gold nuggets with default format)
+$ batea nmap_report.xml
 
 # Output top 3
-$ python3 -m batea -n 3 nmap_report.xml
+$ batea -n 3 nmap_report.xml
 
 # Output all assets
-$ python3 -m batea -A nmap_report.xml
+$ batea -A nmap_report.xml
 
-# training, output and dumping model for persistence
-$ python3 -m batea -D mymodel.batea nmap_report.xml
+# Using multiple input files
+$ batea -A nmap_report1.xml nmap_report2.xml
+
+# Using wildcards (default xsl)
+$ batea ./nmap*.xml
+$ batea -f csv ./assets*.csv
+
+# You can use batea on pretrained models and export trained models.
+# Training, output and dumping model for persistence
+$ batea -D mymodel.batea nmap_report.xml
 
 # Using pretrained model
-$ python3 -m batea -L mymodel.batea nmap_report.xml
+$ batea -L mymodel.batea nmap_report.xml
 
 # Using preformatted csv along with xml files
-$ python3 -m batea -x nmap_report.xml -c portscan_data.csv
+$ batea -x nmap_report.xml -c portscan_data.csv
 
-# Using wildcards (default xsml)
-$ python3 -m batea ./nmap*.xml
-$ python3 -m batea -f csv ./assets*.csv
+
 
 # Adjust verbosity
 
@@ -60,9 +76,11 @@ $ python3 -m batea -vv nmap_report.xml
 
 ## How-To add a feature
 Batea works by assigning numerical features to every host in the report (or series of report).
-Features are objects inherited from the `FeatureBase` class that instanciate a `_transform` method. This method takes the list of hosts as input and return a lambda function that maps to a numpy column of numeric values, indexed by hosts (order is conserved). The column is then added to the matrix representation of the report.
+Hosts are python objects derived from the nmap report. They consist of the following list of attributes: `[ipv4, hostname, os_info, ports]` where ports is a list of ports object. Each port has the following list of attributes : `[port, protocol, state, service, software, version, cpe, scripts]`, defaulting to `None`.
 
-Most feature transformations are implemented using a simple lambda function. Just make sure to give a default numeric value to every host for model compatibility.
+Features are objects inherited from the `FeatureBase` class that instantiate a `_transform` method. This method always take the list of all hosts as input and return a lambda function that maps each host to a numpy column of numeric values (host order is conserved). The column is then appended to the matrix representation of the report. Features have to output correct numerical values (floats or integers), nothing else.
+
+Most feature transformations are implemented using a simple lambda function. Just make sure to default a numeric value to every host for model compatibility.
 
 Ex:
 ```python
@@ -72,6 +90,19 @@ class CustomInterestingPorts(FeatureBase):
         super().__init__(name="some_custom_interesting_ports")
 
     def _transform(self, hosts):
+      """This method takes a list of host and return a function that counts the number
+      of host ports member from a predefined list of "interesting" ports, defaulting to 0.
+
+      Parameters
+      ----------
+      hosts : list
+          The list of all hosts
+
+      Returns
+      -------
+      f : lambda function
+          Counts the number of ports member of the defined list.
+      """
         member_ports = [21, 22, 25, 8080, 8081, 1234]
         f = lambda host: len([port for port in host.ports if port.port in member_ports])
         return f
