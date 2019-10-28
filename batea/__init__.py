@@ -18,15 +18,16 @@
 from .core.nmap_parser import NmapReportParser
 from .core.csv_parser import CSVFileParser
 from .core.report import NmapReport, Host, Port
-from .core.output_manager import OutputManager
+from .core.output_manager import OutputManager, MatrixOutput, JsonOutput
 from .features import FeatureBase
 
 
 from .features.basic_features import TotalPortCountFeature, OpenPortCountFeature, IpOctetFeature
 from .features.basic_features import LowPortCountFeature, NamedServiceCountFeature, BannerCountFeature
-from .features.basic_features import MaxBannerLenghtFeature, WindowsOSFeature, LinuxOSFeature
+from .features.basic_features import MaxBannerLengthFeature, WindowsOSFeature, LinuxOSFeature
 from .features.basic_features import HttpServerCountFeature, DatabaseCountFeature, CommonWindowsDomainAdminFeature
-from .features.basic_features import CommonWindowsDomainMemberFeature, PortEntropyFeature
+from .features.basic_features import CommonWindowsDomainMemberFeature, PortEntropyFeature, HostnameLengthFeature
+from .features.basic_features import HostnameEntropyFeature, TCPPortCountFeature
 
 
 def build_report():
@@ -38,9 +39,10 @@ def build_report():
     report.add_feature(TotalPortCountFeature())
     report.add_feature(OpenPortCountFeature())
     report.add_feature(LowPortCountFeature())
+    report.add_feature(TCPPortCountFeature())
     report.add_feature(NamedServiceCountFeature())
     report.add_feature(BannerCountFeature())
-    report.add_feature(MaxBannerLenghtFeature())
+    report.add_feature(MaxBannerLengthFeature())
     report.add_feature(WindowsOSFeature())
     report.add_feature(LinuxOSFeature())
     report.add_feature(HttpServerCountFeature())
@@ -48,5 +50,7 @@ def build_report():
     report.add_feature(CommonWindowsDomainAdminFeature())
     report.add_feature(CommonWindowsDomainMemberFeature())
     report.add_feature(PortEntropyFeature())
+    report.add_feature(HostnameLengthFeature())
+    report.add_feature(HostnameEntropyFeature())
 
     return report

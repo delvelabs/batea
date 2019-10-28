@@ -19,9 +19,10 @@ from batea import NmapReport, Host, Port
 from ipaddress import ip_address
 from batea.features.basic_features import TotalPortCountFeature, OpenPortCountFeature, IpOctetFeature
 from batea.features.basic_features import LowPortCountFeature, NamedServiceCountFeature, BannerCountFeature
-from batea.features.basic_features import MaxBannerLenghtFeature, WindowsOSFeature, LinuxOSFeature
+from batea.features.basic_features import MaxBannerLengthFeature, WindowsOSFeature, LinuxOSFeature
 from batea.features.basic_features import HttpServerCountFeature, DatabaseCountFeature, CommonWindowsDomainAdminFeature
-from batea.features.basic_features import CommonWindowsDomainMemberFeature, PortEntropyFeature
+from batea.features.basic_features import CommonWindowsDomainMemberFeature, PortEntropyFeature, HostnameLengthFeature
+from batea.features.basic_features import HostnameEntropyFeature
 
 
 def test_total_port_count():
@@ -129,14 +130,14 @@ def test_banner_count():
     assert array[1, 0] == 0
 
 
-def test_banner_lenght():
+def test_banner_length():
     report = NmapReport()
     report.hosts = [Host(ip_address('192.168.1.1'), ports=[Port(port=22, software='OpenSSH Version 1'),
                                                            Port(port=80, software='VMware Authentication Daemon')]),
                     Host(ip_address('192.168.1.2'), ports=[Port(port=22, software=None),
                                                            Port(port=35000, state='open', service='http')])]
 
-    report.add_feature(MaxBannerLenghtFeature())
+    report.add_feature(MaxBannerLengthFeature())
 
     array = report.generate_matrix_representation()
 
@@ -237,3 +238,36 @@ def test_port_entropy():
     assert array[2, 0] == array[0, 0]
     assert array[3, 0] == array[0, 0]
     assert array[4, 0] < array[0, 0]
+
+
+def test_hostname_length():
+    report = NmapReport()
+    report.hosts = [
+        Host(ip_address('192.168.1.1'), hostname='delvesecurity.com', ports=[Port(port=53)]),
+        Host(ip_address('192.168.1.2'), hostname='', ports=[Port(port=53)]),
+        Host(ip_address('192.168.1.3'), hostname=None, ports=[Port(port=53)]),
+    ]
+    report.add_feature(HostnameLengthFeature())
+    array = report.generate_matrix_representation()
+
+    assert array.shape == (3, 1)
+    assert array[0, 0] == len('delvesecurity.com')
+    assert array[1, 0] == 0
+    assert array[2, 0] == 0
+
+
+def test_hostname_entropy():
+    report = NmapReport()
+    report.hosts = [
+        Host(ip_address('192.168.1.1'), hostname='9ba3e58904.delvesecurity.com', ports=[Port(port=53)]),
+        Host(ip_address('192.168.1.2'), hostname='subdomain1.delvesecurity.com', ports=[Port(port=53)]),
+        Host(ip_address('192.168.1.3'), hostname='subdomain2.delvesecurity.com', ports=[Port(port=53)]),
+        Host(ip_address('192.168.1.4'), hostname=None, ports=[Port(port=53)])
+    ]
+    report.add_feature(HostnameEntropyFeature())
+    array = report.generate_matrix_representation()
+
+    assert array.shape == (4, 1)
+    assert array[0, 0] <= array[1, 0]
+    assert array[1, 0] == array[2, 0]
+    assert array[3, 0] == 0

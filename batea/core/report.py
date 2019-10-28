@@ -70,5 +70,5 @@ class Port:
         self.cpe = cpe
         self.scripts = scripts
 
-    def get_banner_lenght(self):
+    def get_banner_length(self):
         return len(self.software) if self.software else 0

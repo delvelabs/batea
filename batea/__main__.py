@@ -17,7 +17,8 @@
 
 
 import click
-from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel
+from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel, MatrixOutput
+from defusedxml import ElementTree
 from batea import build_report
 
 
@@ -30,28 +31,40 @@ from batea import build_report
 @click.option("-D", "--dump-model", type=click.File('wb'), default=None)
 @click.option("-f", "--input-format", type=str, default='xml')
 @click.option('-v', '--verbose', count=True)
+@click.option('-oM', "--output-matrix", type=click.File('w'), default=None)
 @click.argument("nmap_reports", type=click.File('r'), nargs=-1)
 def main(*, nmap_reports, input_format, dump_model, load_model,
-         output_all, read_csv, read_xml, n_output, verbose):
+         output_all, read_csv, read_xml, n_output, verbose, output_matrix):
     """Context-driven asset ranking based using anomaly detection"""
 
     report = build_report()
     csv_parser = CSVFileParser()
     xml_parser = NmapReportParser()
-    output_manager = JsonOutput(verbose)
+    if output_matrix:
+        output_manager = MatrixOutput(output_matrix)
+    else:
+        output_manager = JsonOutput(verbose)
 
-    if input_format == 'xml':
-        for file in nmap_reports:
-            report.hosts.extend([host for host in xml_parser.load_hosts(file)])
-    if input_format == 'csv':
-        for file in nmap_reports:
-            report.hosts.extend([host for host in csv_parser.load_hosts(file)])
-    if read_csv:
-        for file in read_csv:
-            report.hosts.extend([host for host in csv_parser.load_hosts(file)])
-    if read_xml:
-        for file in read_xml:
-            report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+    try:
+        if input_format == 'xml':
+            for file in nmap_reports:
+                report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+        if input_format == 'csv':
+            for file in nmap_reports:
+                report.hosts.extend([host for host in csv_parser.load_hosts(file)])
+        if read_csv:
+            for file in read_csv:
+                report.hosts.extend([host for host in csv_parser.load_hosts(file)])
+        if read_xml:
+            for file in read_xml:
+                report.hosts.extend([host for host in xml_parser.load_hosts(file)])
+    except (UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
+        output_manager.log_parse_error(e)
+        raise SystemExit
+
+    if len(report.hosts) == 0:
+        output_manager.log_empty_report()
+        raise SystemExit
 
     report_features = report.get_feature_names()
     output_manager.add_report_info(report)
@@ -68,6 +81,7 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
         batea.model.fit(matrix_rep)
 
     scores = -batea.model.score_samples(matrix_rep)
+    output_manager.add_scores(scores)
 
     if output_all:
         n_output = len(scores)
