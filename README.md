@@ -123,9 +123,9 @@ def build_report():
 
 ## Using precomputed tabular data (CSV)
 
-It is possible to use preprocessed data to train model or for prediction.
+It is possible to use preprocessed data to train the model or for prediction.
 The data has to be indexed by `(ipv4, port)` with one unique combination per row. The type of data should be close to what you expect from the XML version of an nmap report.
-A column have to use one of the following names, but you don't have to use all of them. The parser defaults to null values if a column is absent.
+A column has to use one of the following names, but you don't have to use all of them. The parser defaults to null values if a column is absent.
 ```python
   'ipv4',
   'hostname',
