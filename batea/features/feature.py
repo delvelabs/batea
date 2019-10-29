@@ -25,7 +25,18 @@ class FeatureBase:
         self.name = name
 
     def transform(self, hosts):
-        """Generate a numpy column (type ndarray) to append to the base representation given a _transform function"""
+        """Generate a numpy column (type ndarray) to append to the base representation given a _transform function
+
+          Parameters
+          ----------
+          hosts : list
+              The list of all hosts
+
+          Returns
+          -------
+          column : numpy ndarray
+              Feature column indexed by host
+         """
         f = self._transform(hosts)
 
         feature = map(f, hosts)
@@ -33,5 +44,16 @@ class FeatureBase:
         return column
 
     def _transform(self, hosts):
-        """specific transform method,should return a function that takes an host as input and return a numeric value"""
+        """specific transform method,should return a function that takes an host as input and return a numeric value
+
+          Parameters
+          ----------
+          hosts : list
+              The list of all hosts
+
+          Returns
+          -------
+          f : lambda function
+              transformation to apply to every host using a map
+        """
         raise NotImplementedError
