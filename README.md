@@ -1,22 +1,23 @@
 # Batea
-*A batea is a large shallow pan of wood or iron traditionally used by gold prospecters for washing sand and gravel to recover gold nuggets.*
+*A batea is a large shallow pan of wood or iron traditionally used by gold prospectors for washing sand and gravel to recover gold nuggets.*
 
 Batea is a context-driven network device ranking framework based on the anomaly detection family of machine learning algorithms. The goal of Batea is to allow security teams to __automatically filter interesting network assets__ in large networks using nmap scan reports. We call those *Gold Nuggets*.
 
 You can try Batea on your nmap scan data without downloading the software, using Batea Live: https://batea.delvesecurity.com/
 
+### How it works
 Batea works by constructing a numerical representation (numpy) of all devices from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets. It is easily extendable by adding specific features, or interesting characteristics, to the numerical representation of the network elements.
 
-The numerical representation of the network is constructed using features, which are inspired by the expertise of the security community. The features act as elements of intuition, and the unsupervised anomaly detection methods allow the context of the network asset, or the total description of the network, to be used as the central building block of the ranking algorithm. The exact algorithm used is Isolation Forest  (https://en.wikipedia.org/wiki/Isolation_forest)
+The numerical representation of the network is constructed using features, which are inspired by the expertise of the security community. The features act as elements of intuition, and the unsupervised anomaly detection methods allow the context of the network asset, or the total description of the network, to be used as the central building block of the ranking algorithm. The exact algorithm used is Isolation Forest (https://en.wikipedia.org/wiki/Isolation_forest)
 
-Machine learning *models* are the heart of Batea. Models are algorithms trained on the whole dataset and used to predict a score on the same (and other) data points (network devices). Batea also allow for model persistence. That is, you can re-use pretrained models and export models trained on large datasets for further use.
+Machine learning *models* are the heart of Batea. Models are algorithms trained on the whole dataset and used to predict a score on the same (and other) data points (network devices). Batea also allows for model persistence. That is, you can re-use pretrained models and export models trained on large datasets for further use.
 
-Ex:
-
+## Usage
 ```bash
 $ sudo nmap -A 192.168.0.0/16 -oX output.xml
-$ python -m batea -v output.xml
+$ batea -v output.xml
 ```
+
 ## Installation
 ```bash
 $ git clone git@bitbucket.org:delvelabs/batea.git
@@ -70,16 +71,15 @@ $ batea -L mymodel.batea nmap_report.xml
 $ batea -x nmap_report.xml -c portscan_data.csv
 
 # Adjust verbosity
-
-$ python3 -m batea -vv nmap_report.xml
+$ batea -vv nmap_report.xml
 ```
 
-## How-To add a feature
+## How to add a feature
 
 Batea works by assigning numerical features to every host in the report (or series of report).
-Hosts are python objects derived from the nmap report. They consist of the following list of attributes: `[ipv4, hostname, os_info, ports]` where ports is a list of ports object. Each port has the following list of attributes : `[port, protocol, state, service, software, version, cpe, scripts]`, all defaulting to `None`.
+Hosts are python objects derived from the nmap report. They consist of the following list of attributes: `[ipv4, hostname, os_info, ports]` where ports is a list of ports objects. Each port has the following list of attributes : `[port, protocol, state, service, software, version, cpe, scripts]`, all defaulting to `None`.
 
-Features are objects inherited from the `FeatureBase` class that instantiate a specific `_transform` method. This method always take the list of all hosts as input and return a lambda function that maps each host to a numpy column of numeric values (host order is conserved). The column is then appended to the matrix representation of the report. Features have to output correct numerical values (floats or integers), nothing else.
+Features are objects inherited from the `FeatureBase` class that instantiate a specific `_transform` method. This method always takes the list of all hosts as input and returns a lambda function that maps each host to a numpy column of numeric values (host order is conserved). The column is then appended to the matrix representation of the report. Features must output correct numerical values (floats or integers) and nothing else.
 
 Most feature transformations are implemented using a simple lambda function. Just make sure to default a numeric value to every host for model compatibility.
 
@@ -91,7 +91,7 @@ class CustomInterestingPorts(FeatureBase):
         super().__init__(name="some_custom_interesting_ports")
 
     def _transform(self, hosts):
-      """This method takes a list of host and return a function that counts the number
+      """This method takes a list of hosts and returns a function that counts the number
       of host ports member from a predefined list of "interesting" ports, defaulting to 0.
 
       Parameters
@@ -102,7 +102,7 @@ class CustomInterestingPorts(FeatureBase):
       Returns
       -------
       f : lambda function
-          Counts the number of ports member of the defined list.
+          Counts the number of ports in the defined list.
       """
         member_ports = [21, 22, 25, 8080, 8081, 1234]
         f = lambda host: len([port for port in host.ports if port.port in member_ports])
