@@ -134,7 +134,7 @@ def test_csv_parser_doesnt_generates_list_of_ports_if_port_number_is_null_or_zer
     parser = CSVFileParser()
     with open(csv_null_filename, 'r') as f:
         hosts = list(parser.load_hosts(f))
-    print(hosts[1].ports)
+
     assert len(hosts) == 2
     assert len(hosts[0].ports) == 1
     assert len(hosts[1].ports) == 0
