@@ -52,13 +52,14 @@ class CSVFileParser:
                                   hostname=row.get('hostname', None),
                                   os_info={'name': row.get('os_name', None)}))
 
-            hosts[-1].ports.append(Port(
-                port=int(row.get('port', None)),
-                protocol=row.get('protocol', None),
-                state=row.get('state', None),
-                service=row.get('service', None),
-                software=row.get('software_banner', None),
-                version=row.get('version', None),
-                cpe=row.get('cpe', None)
-            ))
+            if row.get('port', None) not in ['', None]:
+                hosts[-1].ports.append(Port(
+                    port=int(float(row.get('port', None))),
+                    protocol=row.get('protocol', None),
+                    state=row.get('state', None),
+                    service=row.get('service', None),
+                    software=row.get('software_banner', None),
+                    version=row.get('version', None),
+                    cpe=row.get('cpe', None)
+                ))
         return hosts

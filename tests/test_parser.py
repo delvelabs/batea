@@ -22,8 +22,8 @@ nmap_full_filename = join(dirname(__file__), "samples/single_full.xml")
 nmap_base_filename = join(dirname(__file__), "samples/single_base.xml")
 
 csv_short_filename = join(dirname(__file__), 'samples/batea_simple_csv')
-
 csv_long_filename = join(dirname(__file__), 'samples/batea_long_csv')
+csv_null_filename = join(dirname(__file__), 'samples/batea_null_csv')
 
 
 def test_nmap_parser_generates_list_of_hosts():
@@ -128,3 +128,13 @@ def test_csv_parser_generates_list_of_ports_for_each_hosts():
     assert len(hosts[-1].ports) == 12
     assert hosts[-1].ports[0].port == 853
     assert hosts[-1].ports[0].service == 'unknown'
+
+
+def test_csv_parser_doesnt_generates_list_of_ports_if_port_number_is_null_or_zero():
+    parser = CSVFileParser()
+    with open(csv_null_filename, 'r') as f:
+        hosts = list(parser.load_hosts(f))
+
+    assert len(hosts) == 2
+    assert len(hosts[0].ports) == 1
+    assert len(hosts[1].ports) == 0
