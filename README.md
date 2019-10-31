@@ -19,6 +19,8 @@ $ sudo nmap -A 192.168.0.0/16 -oX output.xml
 
 # Partial info
 $ sudo nmap -O -sV 192.168.0.0/16 -oX output.xml
+
+
 $ batea -v output.xml
 ```
 
