@@ -14,7 +14,11 @@ Machine learning *models* are the heart of Batea. Models are algorithms trained 
 
 ## Usage
 ```bash
+# Complete info
 $ sudo nmap -A 192.168.0.0/16 -oX output.xml
+
+# Partial info
+$ sudo nmap -O -sV 192.168.0.0/16 -oX output.xml
 $ batea -v output.xml
 ```
 
