@@ -153,3 +153,12 @@ ipv4,hostname,os_name,port,state,protocol,service,software_banner
 10.251.53.100,internal.delvesecurity.com,Linux,111,open,tcp,rpcbind,
 10.251.53.188,serious.delvesecurity.com,Linux,6000,open,tcp,X11,"X11Probe: CentOS"
 ```
+
+## Outputing numerical representation
+
+For the data scientist in you, or just for fun and profit, you can output the numerical matrix along with the score column instead of the regular output. This can be useful for further data analysis and debug purpose.
+
+
+```bash
+$ batea -oM network_matrix nmap_report.xml
+```
