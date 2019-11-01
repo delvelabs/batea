@@ -1,7 +1,11 @@
+![logo](https://raw.githubusercontent.com/delvelabs/batea/master/misc/logo_black.png)
+
 # Batea
 *A batea is a large shallow pan of wood or iron traditionally used by gold prospectors for washing sand and gravel to recover gold nuggets.*
 
 Batea is a context-driven network device ranking framework based on the anomaly detection family of machine learning algorithms. The goal of Batea is to allow security teams to __automatically filter interesting network assets__ in large networks using nmap scan reports. We call those *Gold Nuggets*.
+
+For more information about Gold Nuggeting and the science behind Batea, check out out whitepaper [here](https://delvesecurity.com/resources/automating-intuition-applying-machine-learning-to-outstanding-network-asset-detection/) 
 
 You can try Batea on your nmap scan data without downloading the software, using Batea Live: https://batea.delvesecurity.com/
 
