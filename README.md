@@ -1,3 +1,5 @@
+![logo](https://raw.githubusercontent.com/delvelabs/batea/master/misc/logo_black.png)
+
 # Batea
 *A batea is a large shallow pan of wood or iron traditionally used by gold prospectors for washing sand and gravel to recover gold nuggets.*
 
