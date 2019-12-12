@@ -5,7 +5,7 @@
 
 Batea is a context-driven network device ranking framework based on the anomaly detection family of machine learning algorithms. The goal of Batea is to allow security teams to __automatically filter interesting network assets__ in large networks using nmap scan reports. We call those *Gold Nuggets*.
 
-For more information about Gold Nuggeting and the science behind Batea, check out our whitepaper [here](http://delvesecurity.com/wp-content/uploads/2019/10/Automating-Intuition-Batea-WP.pdf) 
+For more information about Gold Nuggeting and the science behind Batea, check out our whitepaper [here](http://delvesecurity.com/wp-content/uploads/2019/10/Automating-Intuition-Batea-WP.pdf)
 
 You can try Batea on your nmap scan data without downloading the software, using Batea Live: https://batea.delvesecurity.com/
 
@@ -30,7 +30,7 @@ $ batea -v output.xml
 
 ## Installation
 ```bash
-$ git clone git@bitbucket.org:delvelabs/batea.git
+$ git clone git@github.com:delvelabs/batea.git
 $ cd batea
 $ python3 setup.py sdist
 $ pip3 install -r requirements.txt
@@ -40,7 +40,7 @@ $ pip3 install -e .
 ## Developers Installation
 
 ```bash
-$ git clone git@bitbucket.org:delvelabs/batea.git
+$ git clone git@github.com:delvelabs/batea.git
 $ cd batea
 $ python3 -m venv batea/
 $ source batea/bin/activate
