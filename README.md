@@ -30,7 +30,7 @@ $ batea -v output.xml
 
 ## Installation
 ```bash
-$ git clone git@bitbucket.org:delvelabs/batea.git
+$ git clone git@github.com:delvelabs/batea.git
 $ cd batea
 $ python3 setup.py sdist
 $ pip3 install -r requirements.txt
@@ -40,7 +40,7 @@ $ pip3 install -e .
 ## Developers Installation
 
 ```bash
-$ git clone git@bitbucket.org:delvelabs/batea.git
+$ git clone git@github.com:delvelabs/batea.git
 $ cd batea
 $ python3 -m venv batea/
 $ source batea/bin/activate
