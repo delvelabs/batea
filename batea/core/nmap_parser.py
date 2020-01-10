@@ -49,22 +49,22 @@ class NmapReportParser:
 
     def _find_ports(self, host):
         ports = []
-        for port in host.find("ports").findall("port"):
-            state = port.find("state")
-            service = port.find('service')
-            cpe = service.find('cpe')
-            port = Port(
-                port=int(port.attrib['portid']),
-                protocol=port.attrib['protocol'],
-                state=state.attrib['state'],
-                service=service.attrib['name'],
-                software=service.attrib['product'] if 'product' in service.attrib else None,
-                version=service.attrib['version'] if 'version' in service.attrib else None,
-                cpe=cpe.text if cpe is not None else None
-            )
+        if host.find("ports") is not None:
+            for port in host.find("ports").findall("port"):
+                state = port.find("state")
+                service = port.find('service')
+                cpe = service.find('cpe')
+                port = Port(
+                    port=int(port.attrib['portid']),
+                    protocol=port.attrib['protocol'],
+                    state=state.attrib['state'],
+                    service=service.attrib['name'],
+                    software=service.attrib['product'] if 'product' in service.attrib else None,
+                    version=service.attrib['version'] if 'version' in service.attrib else None,
+                    cpe=cpe.text if cpe is not None else None
+                )
 
-            ports.append(port)
-
+                ports.append(port)
         return ports
 
     def _os_detection(self, host):

@@ -20,6 +20,7 @@ from os.path import join, dirname
 
 nmap_full_filename = join(dirname(__file__), "samples/single_full.xml")
 nmap_base_filename = join(dirname(__file__), "samples/single_base.xml")
+nmap_malformed_filename = join(dirname(__file__), "samples/single_with_nulls.xml")
 
 csv_short_filename = join(dirname(__file__), 'samples/batea_simple_csv')
 csv_long_filename = join(dirname(__file__), 'samples/batea_long_csv')
@@ -108,6 +109,16 @@ def test_nmap_parser_extract_info_from_simple_report():
     assert ports[0].port == 22
     assert ports[0].software is None
     assert not host.os_info
+
+
+def test_nmap_parser_doesnt_crash_if_port_number_is_null_or_zero():
+    parser = NmapReportParser()
+    with open(nmap_malformed_filename, 'r') as f:
+        hosts = list(parser.load_hosts(f))
+
+    assert len(hosts) == 2
+    assert len(hosts[0].ports) == 1
+    assert len(hosts[1].ports) == 0
 
 
 def test_csv_parser_generates_list_of_hosts():
