@@ -36,7 +36,7 @@ class BateaModel:
     def load_model(self, model_file):
         self.model, self.model_features = pickle.load(model_file)
         assert self.model_features == self.report_features, \
-            f"Model and data don't share matching features: {model_features} != {report_features}"
+            f"Model and data don't share matching features: {self.model_features} != {self.report_features}"
 
     def dump_model(self, dump_model):
         pickle.dump((self.model, self.report_features), dump_model)
