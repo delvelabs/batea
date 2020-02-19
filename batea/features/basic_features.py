@@ -149,7 +149,7 @@ class NamedServiceCountFeature(FeatureBase):
           f : lambda function
               Integer sums the number of ports that have been recognized by nmap.
         """
-        f = lambda x: len([port for port in x.ports if port.service != "unknown"])
+        f = lambda x: len([port for port in x.ports if port.service is not None and port.service != "unknown"])
         return f
 
 
@@ -257,7 +257,7 @@ class HttpServerCountFeature(FeatureBase):
           f : lambda function
               Integer sum of all ports with an http service,
         """
-        f = lambda x: len([port for port in x.ports if 'http' in port.service])
+        f = lambda x: len([port for port in x.ports if port.service is not None and 'http' in port.service])
         return f
 
 

@@ -41,9 +41,6 @@ class CSVFileParser:
 
         reader = csv.DictReader(file)
 
-        assert all([field in ALLOWED_COLUMNS for field in reader.fieldnames]), \
-            f"Columns should match specs {reader.fieldnames} != {ALLOWED_COLUMNS}"
-
         current_host = None
         hosts = []
         for row in reader:

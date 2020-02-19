@@ -31,8 +31,8 @@ class OutputManager:
         self._add_data("general_log", message)
 
     def log_parse_error(self, e):
-        stderr.write(e)
-        stderr.write("Invalid or corrupted file, use nmap XML output or correct CSV. \nQuitting\n")
+        stderr.write(e.__str__())
+        stderr.write("\nUnable to parse file, invalid or corrupted filetype.\n")
 
     def log_empty_report(self):
         stderr.write("Empty report, can't predict. \nQuitting\n")
