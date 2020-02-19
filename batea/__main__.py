@@ -19,7 +19,10 @@
 import click
 from .core import NmapReportParser, NmapReport, CSVFileParser, JsonOutput, BateaModel, MatrixOutput
 from defusedxml import ElementTree
+from xml.etree.ElementTree import ParseError
 from batea import build_report
+import warnings
+warnings.filterwarnings('ignore')
 
 
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
@@ -58,7 +61,7 @@ def main(*, nmap_reports, input_format, dump_model, load_model,
         if read_xml:
             for file in read_xml:
                 report.hosts.extend([host for host in xml_parser.load_hosts(file)])
-    except (UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
+    except (ParseError, UnicodeDecodeError, ElementTree.ParseError, ValueError) as e:
         output_manager.log_parse_error(e)
         raise SystemExit
 

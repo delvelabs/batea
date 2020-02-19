@@ -53,14 +53,15 @@ class NmapReportParser:
             for port in host.find("ports").findall("port"):
                 state = port.find("state")
                 service = port.find('service')
-                cpe = service.find('cpe')
+
+                cpe = service.find('cpe') if service is not None else None
                 port = Port(
                     port=int(port.attrib['portid']),
                     protocol=port.attrib['protocol'],
                     state=state.attrib['state'],
-                    service=service.attrib['name'],
-                    software=service.attrib['product'] if 'product' in service.attrib else None,
-                    version=service.attrib['version'] if 'version' in service.attrib else None,
+                    service=service.attrib['name'] if service is not None else None,
+                    software=service.attrib['product'] if service is not None and 'product' in service.attrib else None,
+                    version=service.attrib['version'] if service is not None and 'version' in service.attrib else None,
                     cpe=cpe.text if cpe is not None else None
                 )
 
