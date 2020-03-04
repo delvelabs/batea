@@ -1,3 +1,5 @@
+![Python package](https://github.com/delvelabs/batea/workflows/Python%20package/badge.svg?branch=master)
+
 ![logo](https://raw.githubusercontent.com/delvelabs/batea/master/misc/logo_black.png)
 
 # Batea
