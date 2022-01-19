@@ -9,7 +9,6 @@ Batea is a context-driven network device ranking framework based on the anomaly 
 
 For more information about Gold Nuggeting and the science behind Batea, check out our whitepaper [here](http://delvesecurity.com/wp-content/uploads/2019/10/Automating-Intuition-Batea-WP.pdf) 
 
-You can try Batea on your nmap scan data without downloading the software, using Batea Live: https://batea.delvesecurity.com/
 
 ### How it works
 Batea works by constructing a numerical representation (numpy) of all devices from your nmap reports (XML) and then applying anomaly detection methods to uncover the gold nuggets. It is easily extendable by adding specific features, or interesting characteristics, to the numerical representation of the network elements.
